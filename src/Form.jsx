@@ -1,6 +1,25 @@
 import {useFormik} from 'formik';
 
-const formik = useFormik({
+const validate = values =>{
+    const errors = {};
+
+    if(!values.name){
+        errors.name = 'Обязательное поле';
+    }else if(values.name.length <2){
+        errors.name = 'Минимум 2 символа для заполнения!';
+    }
+
+    if(!values.email){
+        errors.email = 'Обязательное поле';
+    }else if (
+           !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+         ) {
+           errors.email = 'Неправильный email адрес';
+         }
+}
+
+const Form = () => {
+    const formik = useFormik({
     initialValues: {
         name: '',
         email: '',
@@ -10,8 +29,6 @@ const formik = useFormik({
     },
     onSubmit: values => console.log(JSON.stringify(values,null,2))
 })
-
-const Form = () => {
     return (
         <form className="form" onSubmit={formik.handleSubmit}>
             <h2>Отправить пожертвование</h2>
@@ -42,7 +59,10 @@ const Form = () => {
             <label htmlFor="currency">Валюта</label>
             <select
                 id="currency"
-                name="currency">
+                name="currency"
+                value={formik.values.currency}
+                onChange={formik.handleChange}
+                >
                     <option value="">Выберите валюту</option>
                     <option value="USD">USD</option>
                     <option value="UAH">UAH</option>
@@ -52,9 +72,16 @@ const Form = () => {
             <textarea 
                 id="text"
                 name="text"
+                value={formik.values.text}
+                onChange={formik.handleChange}
             />
             <label className="checkbox">
-                <input name="terms" type="checkbox" />
+                <input
+                    name="terms" 
+                    type="checkbox" 
+                    value={formik.values.text}
+                    onChange={formik.handleChange}
+                 />
                 Соглашаетесь с политикой конфиденциальности?
             </label>
             <button type="submit">Отправить</button>
